@@ -28,7 +28,7 @@ func minH(a, b int64) int64 {
 func main() {
 	// 基础信息
 	baseUrl := "http://127.0.0.1:8888"
-	uploadFilePath := "./xxx.jpg"
+	uploadFilePath := "E:\\go-oproxy\\osproxy-new\\test\\VID_20230223_192203.mp4"
 	uploadFile := filepath.Base(uploadFilePath)
 
 	// ##################### 获取上传连接 ###################
@@ -85,7 +85,7 @@ func main() {
 			}
 		}(file)
 
-		// 创建表单数据项
+		// 创建表单数据项  字段名（name）和文件名
 		dst, err := writer.CreateFormFile("file", uploadFile)
 		if err != nil {
 			panic(err)
@@ -130,9 +130,9 @@ func main() {
 		currentChunk := int64(1)
 		totalChunk := int64(math.Ceil(float64(fileSize) / chunkSize))
 		var wg sync.WaitGroup
+		// 控制并发执行的协程数量
 		ch := make(chan struct{}, 5)
 		for currentChunk <= totalChunk {
-
 			start := (currentChunk - 1) * int64(chunkSize)
 			end := minH(fileSize, start+int64(chunkSize))
 			buffer := make([]byte, end-start)

@@ -14,16 +14,16 @@ log:
   max_size: 500             # 日志文件最大大小（MB）
   max_age: 28               # 旧文件的最大保留天数
   compress: true            # 是否压缩
-  enable_file: false        # 是否启用日志文件
+  enable_file: true        # 是否启用日志文件
 
 database:
   - db_name: default
-    driver: postgres                # 数据库驱动
-    host: 127.0.0.1                 # 服务地址
-    port: 5432                      # 端口号
-    database: postgres              # 数据库名称
-    username: postgres              # 用户名
-    password: 123456                # 密码
+    driver: mysql                # 数据库驱动
+    host: 120.46.57.238             # 服务地址
+    port: 3306                     # 端口号
+    database: osproxy              # 数据库名称
+    username: root             # 用户名
+    password: root                # 密码
     charset: utf8mb4                # 编码格式
     max_idle_conns: 10              # 空闲连接池中连接的最大数量
     max_open_conns: 100             # 打开数据库连接的最大数量
@@ -33,17 +33,17 @@ database:
     log_filename: sql.log           # 日志文件名称
 
 redis:
-  host: 127.0.0.1        # 服务地址
+  host: 120.46.57.238    # 服务地址
   port: 6379             # 服务端口
   db: 0                  # 库选择
   password: 123456       # 密码
 
 minio:
-  endpoint: 127.0.0.1:9000      # 服务地址
+  endpoint: 120.46.57.238:9000      # 服务地址
   access_key_id: minioadmin     # 用户名
   secret_access_key: minioadmin # 密码
   use_ssl: false                # 密码
-  enabled: false                 # 是否启用
+  enabled: true                # 是否启用
 
 cos:
   appid: 12***63195                              # 唯一标识
@@ -60,4 +60,4 @@ oss:
 
 
 local:
-  enabled: true                                 # 是否启用
+  enabled: false                                 # 是否启用

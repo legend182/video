@@ -50,6 +50,7 @@ func init() {
 			IdleConnTimeout:       60 * time.Second, // 空闲连接的超时时间
 		},
 	}
+
 }
 
 // CheckRespStatus 状态检查

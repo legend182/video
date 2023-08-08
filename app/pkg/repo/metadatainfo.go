@@ -18,6 +18,15 @@ func (r *metaDataInfoRepo) GetByUid(db *gorm.DB, uid int64) (*models.MetaDataInf
 	return ret, nil
 }
 
+// GetAllVideo .
+func (r *metaDataInfoRepo) GetAllVideo(db *gorm.DB) ([]models.VideoInfo, error) {
+	var ret []models.VideoInfo
+	if err := db.Model(&models.MetaDataInfo{}).Select("uid", "name").Where("status = ? AND bucket=? ", 1, "video").Find(&ret).Error; err != nil {
+		return ret, err
+	}
+	return ret, nil
+}
+
 // GetResumeByMd5 .
 func (r *metaDataInfoRepo) GetResumeByMd5(db *gorm.DB, md5 []string) ([]models.MetaDataInfo, error) {
 	var ret []models.MetaDataInfo
@@ -66,5 +75,11 @@ func (r *metaDataInfoRepo) BatchCreate(db *gorm.DB, m *[]models.MetaDataInfo) er
 // Updates .
 func (r *metaDataInfoRepo) Updates(db *gorm.DB, uid int64, columns map[string]interface{}) error {
 	err := db.Model(&models.MetaDataInfo{}).Where("uid = ?", uid).Updates(columns).Error
+	return err
+}
+
+// Create 新增文件元数据
+func (r *metaDataInfoRepo) Create(db *gorm.DB, m *models.MetaDataInfo) error {
+	err := db.Create(m).Error
 	return err
 }

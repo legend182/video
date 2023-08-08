@@ -31,7 +31,6 @@ func NewHttpServer(
 		Handler: router,
 	}
 }
-
 func NewApp(
 	conf *config.Configuration,
 	logger *zap.Logger,

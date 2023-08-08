@@ -144,7 +144,7 @@ paths:
   /api/storage/v0/download:
     get:
       consumes:
-      - application/json
+      - multipart/form-data
       description: 下载数据
       parameters:
       - description: 文件uid
@@ -162,31 +162,6 @@ paths:
         name: online
         required: true
         type: string
-      - description: 链接生成时间
-        in: query
-        name: date
-        required: true
-        type: string
-      - description: 过期时间
-        in: query
-        name: expire
-        required: true
-        type: string
-      - description: 存储桶
-        in: query
-        name: bucket
-        required: true
-        type: string
-      - description: 存储名称
-        in: query
-        name: object
-        required: true
-        type: string
-      - description: 签名
-        in: query
-        name: signature
-        required: true
-        type: string
       produces:
       - application/json
       responses:
@@ -197,6 +172,32 @@ paths:
       summary: 下载数据
       tags:
       - 下载
+  /api/storage/v0/fileList:
+    get:
+      consumes:
+      - application/json
+      description: 获取列表
+      parameters:
+      - description: page
+        in: query
+        name: page
+        required: true
+        type: string
+      - description: pageSize
+        in: query
+        name: pageSize
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/web.Response'
+      summary: 获取列表
+      tags:
+      - 列表
   /api/storage/v0/health:
     get:
       consumes:
@@ -266,6 +267,99 @@ paths:
       summary: 初始化上传连接
       tags:
       - 链接
+  /api/storage/v0/mupload1:
+    put:
+      consumes:
+      - multipart/form-data
+      description: 获取分片上传uid
+      parameters:
+      - description: fileName
+        in: formData
+        name: fileName
+        required: true
+        type: string
+      - description: totalChunks
+        in: formData
+        name: totalChunks
+        required: true
+        type: string
+      - description: md5
+        in: formData
+        name: md5
+        required: true
+        type: string
+      - description: fileSize
+        in: formData
+        name: fileSize
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/web.Response'
+      summary: 获取分片上传uid
+      tags:
+      - 上传
+  /api/storage/v0/mupload2:
+    put:
+      consumes:
+      - multipart/form-data
+      description: 上传分片
+      parameters:
+      - description: 上传的文件
+        in: formData
+        name: file
+        required: true
+        type: file
+      - description: 文件uid
+        in: formData
+        name: uid
+        required: true
+        type: string
+      - description: md5
+        in: formData
+        name: md5
+        required: true
+        type: string
+      - description: chunk
+        in: formData
+        name: chunkNum
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/web.Response'
+      summary: 上传分片
+      tags:
+      - 上传
+  /api/storage/v0/mupload3:
+    put:
+      consumes:
+      - multipart/form-data
+      description: 合并分片
+      parameters:
+      - description: 文件uid
+        in: formData
+        name: uid
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/web.Response'
+      summary: 合并分片
+      tags:
+      - 上传
   /api/storage/v0/ping:
     get:
       consumes:
@@ -331,6 +425,27 @@ paths:
       summary: 秒传&断点续传
       tags:
       - 秒传
+  /api/storage/v0/supload:
+    put:
+      consumes:
+      - multipart/form-data
+      description: 单文件上传
+      parameters:
+      - description: 上传的文件
+        in: formData
+        name: file
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/web.Response'
+      summary: 单文件上传
+      tags:
+      - 上传
   /api/storage/v0/upload:
     put:
       consumes:
@@ -479,4 +594,19 @@ paths:
       summary: 上传分片文件
       tags:
       - 上传
+  /api/storage/v0/videos:
+    get:
+      consumes:
+      - application/json
+      description: 获取视频
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/web.Response'
+      summary: 获取视频uid
+      tags:
+      - 列表
 swagger: "2.0"

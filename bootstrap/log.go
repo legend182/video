@@ -107,6 +107,7 @@ func setLogLevel(conf *config.Configuration) {
 		options = append(options, zap.AddStacktrace(level))
 	case "info":
 		level = zap.InfoLevel
+		//options = append(options, zap.AddStacktrace(level))
 	case "warn":
 		level = zap.WarnLevel
 	case "error":
@@ -116,8 +117,10 @@ func setLogLevel(conf *config.Configuration) {
 		level = zap.DPanicLevel
 	case "panic":
 		level = zap.PanicLevel
+		//options = append(options, zap.AddStacktrace(level))
 	case "fatal":
 		level = zap.FatalLevel
+		options = append(options, zap.AddStacktrace(level))
 	default:
 		level = zap.InfoLevel
 	}

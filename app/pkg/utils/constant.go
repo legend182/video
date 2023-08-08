@@ -12,6 +12,9 @@ const (
 	ServiceRedisTTl       = time.Second * 3 * 60
 	S3StoragePutThreadNum = 10
 	MultiPartDownload     = 10
+	Video                 = "video"
+	VideoCount            = 3
+	VideoHash             = "hvideo"
 )
 
 // 任务类型

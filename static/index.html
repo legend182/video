@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>File List</title>
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+        th, td {
+            border: 1px solid black;
+            padding: 8px;
+            text-align: left;
+        }
+        .pagination {
+            margin-top: 20px;
+        }
+        .pagination button {
+            margin-right: 5px;
+        }
+    /*     提交*/
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        p {
+            color: #666;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #f5f5f5;
+            padding: 20px;
+            border-radius: 5px;
+        }
+
+        .upload-form {
+            margin-bottom: 20px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background-color: #eee;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+
+        .progress-bar span {
+            display: block;
+            height: 100%;
+            background-color: #4CAF50;
+        }
+
+    </style>
+    <script src="https://cdn.bootcdn.net/ajax/libs/spark-md5/3.0.2/spark-md5.js"></script>
+</head>
+<body>
+<h1>File List</h1>
+<div class="container">
+    <h1>文件上传示例</h1>
+    <div class="upload-form">
+        <input type="file" id="fileInput">
+        <button onclick="uploadFile()">上传</button>
+    </div>
+    <div class="progress-bar" id="progressBar" style="display: none;">
+        <span></span>
+    </div>
+    <p id="status"></p>
+</div>
+<table>
+    <thead>
+    <tr>
+        <th>UID</th>
+        <th>Name</th>
+        <th>Created At</th>
+        <th>Updated At</th>
+        <th>Actions</th>
+    </tr>
+    </thead>
+    <tbody id="fileListBody">
+    </tbody>
+</table>
+
+<div class="pagination">
+    <button id="prevButton" disabled>Previous</button>
+    <button id="nextButton">Next</button>
+</div>
+
+<script>
+    let currentPage = 1;
+    const pageSize = 3;
+    const prevButton = document.getElementById('prevButton');
+    const nextButton = document.getElementById('nextButton');
+
+    function fetchFileList(page) {
+        fetch(`http://127.0.0.1:8888/api/storage/v0/fileList?page=${page}&pageSize=${pageSize}`, {
+            method: 'GET'
+        })
+            .then(response => response.json())
+            .then(data => {
+                const fileListBody = document.getElementById('fileListBody');
+                fileListBody.innerHTML = '';
+
+                data.data.forEach(file => {
+                    const row = document.createElement('tr');
+                    const uidCell = document.createElement('td');
+                    uidCell.textContent = file.uid;
+                    row.appendChild(uidCell);
+                    const nameCell = document.createElement('td');
+                    nameCell.textContent = file.name;
+                    row.appendChild(nameCell);
+                    const createdAtCell = document.createElement('td');
+                    createdAtCell.textContent = file['created-at'];
+                    row.appendChild(createdAtCell);
+                    const updatedAtCell = document.createElement('td');
+                    updatedAtCell.textContent = file['updated-at'];
+                    row.appendChild(updatedAtCell);
+
+                    // 添加下载按钮
+                    const downloadButton = document.createElement('button');
+                    downloadButton.textContent = 'Download';
+                    downloadButton.addEventListener('click', () => {
+                        const downloadUrl = `http://127.0.0.1:8888/api/storage/v0/download?online=0&uid=${file.uid}&name=${file.name}`;
+                        // 执行下载操作，例如使用 window.location.href = downloadUrl;
+                        window.location.href = downloadUrl
+                        console.log('Download URL:', downloadUrl);
+                    });
+                    const actionsCell = document.createElement('td');
+                    actionsCell.appendChild(downloadButton);
+                    row.appendChild(actionsCell);
+
+                    // 添加预览按钮
+                    const previewButton = document.createElement('button');
+                    previewButton.textContent = 'Preview';
+                    previewButton.addEventListener('click', () => {
+                        const previewUrl = `http://127.0.0.1:8888/api/storage/v0/download?online=1&uid=${file.uid}&name=${file.name}`;
+                        // 执行预览操作，例如使用
+                        window.open(previewUrl);
+                        console.log('Preview URL:', previewUrl);
+                    });
+                    actionsCell.appendChild(previewButton);
+
+                    fileListBody.appendChild(row);
+                });
+
+                // 更新按钮状态
+                prevButton.disabled = currentPage === 1;
+                nextButton.disabled = data.length < pageSize;
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+    }
+
+    prevButton.addEventListener('click', () => {
+        currentPage--;
+        fetchFileList(currentPage);
+    });
+
+    nextButton.addEventListener('click', () => {
+        currentPage++;
+        fetchFileList(currentPage);
+    });
+
+    // 初始加载第一页数据
+    fetchFileList(currentPage);
+//     提交
+    function uploadFile() {
+        const fileInput = document.getElementById('fileInput');
+        const file = fileInput.files[0];
+
+        if (file) {
+            if (file.size < 1024 * 1024) {
+                // 小于1MB，进行单文件上传
+                uploadSingleFile(file);
+            } else {
+                // 大于1MB，进行分片上传
+                initiateChunkedUpload(file);
+            }
+        } else {
+            // 没有选择文件
+            document.getElementById('status').textContent = '请选择一个文件进行上传。';
+        }
+    }
+
+    function uploadSingleFile(file) {
+        // 单文件上传逻辑
+        const url = 'http://127.0.0.1:8888/api/storage/v0/supload'; // 替换为实际的单文件上传接口
+        const formData = new FormData();
+        formData.append('file', file);
+        const xhr = new XMLHttpRequest();
+        xhr.open('PUT', url, true);
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState === 4) {
+                if (xhr.status === 200) {
+                    document.getElementById('status').textContent = '文件上传成功。';
+                } else {
+                    document.getElementById('status').textContent = '文件上传失败。';
+                }
+            }
+        };
+        xhr.send(formData);
+        document.getElementById('status').textContent = '正在上传文件：' + file.name;
+    }
+    async function initiateChunkedUpload(file) {
+        const initiateUrl = 'http://127.0.0.1:8888/api/storage/v0/mupload1'; // 替换为实际的初始化分块上传接口
+
+        const fileName = file.name;
+        const fileSize = file.size;
+        //const fileMD5 = await calculateFileMD5(file)
+        let fileMD5
+        await calculateFileMD5(file).then(md5 => {
+            // 在 .then() 方法中将解析值分配给变量
+            fileMD5 = md5;
+            console.log(`数据块的 MD5 值：${md5}`);
+            // 进行其他操作，使用 md5Value 变量
+        }).catch(error => {
+            console.error('计算数据块的 MD5 值时发生错误:', error);
+        })
+        const totalChunks = Math.ceil(file.size / (1 * 1024 * 1024)); // 分片大小为1MB
+        const xhr = new XMLHttpRequest();
+        xhr.open('PUT', initiateUrl, true);
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState === 4) {
+                if (xhr.status === 200) {
+                    console.log(xhr.responseText)
+                    const response = JSON.parse(xhr.responseText);
+                    const data = response.data
+                    const uid = data;
+                    alert(data)
+                    // 分片传输
+                    uploadChunks(uid, file, totalChunks);
+                } else {
+                    // 初始化分块上传失败的处理逻辑
+                }
+            }
+        };
+        alert(fileMD5)
+        const formData = new FormData();
+        formData.append('fileName', fileName);
+        formData.append('md5', fileMD5);
+        formData.append('totalChunks', totalChunks);
+        formData.append('fileSize', fileSize);
+        xhr.send(formData);
+    }
+
+    //async function uploadChunks(uid, file, totalChunks) {
+    //     const uploadUrl = 'http://127.0.0.1:8888/api/storage/v0/mupload2'; // 替换为实际的分片上传接口
+    //     const chunkSize = 1 * 1024 * 1024; // 分片大小为1MB
+    //     let chunkIndex
+    //     for (chunkIndex = 0; chunkIndex < totalChunks; chunkIndex++) {
+    //         const startByte = chunkIndex * chunkSize;
+    //         const endByte = Math.min(startByte + chunkSize, file.size);
+    //         const chunk = file.slice(startByte, endByte);
+    //         let fileMD5
+    //         await calculateFileMD5(chunk).then(md5 => {
+    //             // 在 .then() 方法中将解析值分配给变量
+    //             fileMD5 = md5;
+    //             console.log(`数据块的 MD5 值：${md5}`);
+    //             //alert(md5)
+    //             // 进行其他操作，使用 md5Value 变量
+    //         }).catch(error => {
+    //             console.error('计算数据块的 MD5 值时发生错误:', error);
+    //         })
+    //         const chunkMD5 = fileMD5;
+    //         const formData = new FormData();
+    //         formData.append('uid', uid);
+    //         formData.append('chunkNum', chunkIndex);
+    //         formData.append('md5', chunkMD5);
+    //         formData.append('file', chunk);
+    //
+    //         const xhr = new XMLHttpRequest();
+    //         xhr.open('PUT', uploadUrl, true);
+    //         xhr.onreadystatechange = function () {
+    //             if (xhr.readyState === 4) {
+    //                 if (xhr.status === 200) {
+    //                     // 分片上传成功的处理逻辑
+    //                 } else {
+    //                     // 分片上传失败的处理逻辑
+    //                 }
+    //             }
+    //         };
+    //
+    //         xhr.send(formData);
+    //     }
+    //     // 分片传输完成后进行合并
+    //     mergeChunks(uid);
+    // }
+    async function uploadChunks(uid, file, totalChunks) {
+        const uploadUrl = 'http://127.0.0.1:8888/api/storage/v0/mupload2'; // 替换为实际的分片上传接口
+        const chunkSize = 1 * 1024 * 1024; // 分片大小为1MB
+        const promises = [];
+
+        for (let chunkIndex = 0; chunkIndex < totalChunks; chunkIndex++) {
+            const startByte = chunkIndex * chunkSize;
+            const endByte = Math.min(startByte + chunkSize, file.size);
+            const chunk = file.slice(startByte, endByte);
+
+            const promise = new Promise((resolve, reject) => {
+                calculateFileMD5(chunk)
+                    .then(md5 => {
+                        const chunkMD5 = md5;
+                        console.log(`数据块的 MD5 值：${md5}`);
+                        const formData = new FormData();
+                        formData.append('uid', uid);
+                        formData.append('chunkNum', chunkIndex);
+                        formData.append('md5', chunkMD5);
+                        formData.append('file', chunk);
+
+                        const xhr = new XMLHttpRequest();
+                        xhr.open('PUT', uploadUrl, true);
+                        xhr.onreadystatechange = function () {
+                            if (xhr.readyState === 4) {
+                                if (xhr.status === 200) {
+                                    resolve(); // 分片上传成功
+                                } else {
+                                    reject(); // 分片上传失败
+                                }
+                            }
+                        };
+
+                        xhr.send(formData);
+                    })
+                    .catch(error => {
+                        console.error('计算数据块的 MD5 值时发生错误:', error);
+                        reject();
+                    });
+            });
+
+            promises.push(promise);
+        }
+        await Promise.all(promises); // 等待所有分片上传的 Promise 完成
+        // 分片传输完成后进行合并
+        mergeChunks(uid);
+    }
+    function mergeChunks(uid) {
+        const mergeUrl = 'http://127.0.0.1:8888/api/storage/v0/mupload3'; // 替换为实际的分片合并接口
+        const xhr = new XMLHttpRequest();
+        xhr.open('PUT', mergeUrl, true);
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState === 4) {
+                if (xhr.status === 200) {
+                    // 分片合并成功的处理逻辑
+                } else {
+                    // 分片合并失败的处理逻辑
+                }
+            }
+        };
+        const formData = new FormData();
+        formData.append('uid', uid);
+        xhr.send(formData);
+    }
+    function calculateFileMD5(file) {
+        return new Promise((resolve, reject) => {
+            var blobSlice = File.prototype.slice || File.prototype.mozSlice || File.prototype.webkitSlice,
+                chunkSize = 1024 * 1024, // Read in chunks of 2MB
+                chunks = Math.ceil(file.size / chunkSize),
+                currentChunk = 0,
+                spark = new SparkMD5.ArrayBuffer(),
+                fileReader = new FileReader();
+
+            fileReader.onload = function (e) {
+                console.log('read chunk nr', currentChunk + 1, 'of', chunks);
+                spark.append(e.target.result); // Append array buffer
+                currentChunk++;
+
+                if (currentChunk < chunks) {
+                    loadNext();
+                } else {
+                    console.log('finished loading');
+                    const md5 = spark.end(); // Compute hash
+                    resolve(md5); // 将 MD5 值作为解决值传递给 Promise
+                }
+            };
+
+            fileReader.onerror = function () {
+                console.warn('oops, something went wrong.');
+                reject('Error occurred while reading the file.'); // 在发生错误时拒绝 Promise
+            };
+            function loadNext() {
+                var start = currentChunk * chunkSize,
+                    end = (start + chunkSize >= file.size) ? file.size : start + chunkSize;
+
+                fileReader.readAsArrayBuffer(blobSlice.call(file, start, end));
+            }
+
+            loadNext();
+        });
+    }
+</script>
+</body>
+</html>

@@ -28,8 +28,8 @@ func GetExtension(filename string) string {
 	return strings.ToLower(ext[1:])
 }
 
-// selectBucketBySuffix .
-func selectBucketBySuffix(filename string) string {
+// SelectBucketBySuffix  .
+func SelectBucketBySuffix(filename string) string {
 	suffix := GetExtension(filename)
 	if suffix == "" {
 		return ""
@@ -79,7 +79,7 @@ func CheckValid(uidStr, date, expireStr string) (int64, error, string) {
 func GenUploadSingle(filename string, expire int, respChan chan models.GenUploadResp,
 	metaDataInfoChan chan models.MetaDataInfo, wg *sync.WaitGroup) {
 	defer wg.Done()
-	bucket := selectBucketBySuffix(filename)
+	bucket := SelectBucketBySuffix(filename)
 	uid, err := NewSnowFlake().NextId()
 	if err != nil {
 		//lgLogger.WithContext(c).Error("雪花算法生成ID失败，详情：", zap.Any("err", err.Error()))

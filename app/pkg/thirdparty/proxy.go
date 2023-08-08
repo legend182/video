@@ -25,11 +25,12 @@ func (s *storageService) Locate(scheme, ip, port, uid string) (string, error) {
 		Method: "GET",
 		Params: map[string]string{"uid": uid},
 	}
+	// 状态码、body、header、err，body即为c.json()中obj对象，即为web中的Response{}，数据存在Data中
 	_, data, _, err := base.Ask(req)
 	if err != nil {
 		return "", err
 	}
-
+	// 获取IP
 	return strings.Trim(string(data.Data), "\""), nil
 }
 

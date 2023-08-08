@@ -5,7 +5,6 @@ import "time"
 /*
 MetaDataInfo 表结构定义及增删改查接口
 */
-
 // MetaDataInfo 元数据表
 type MetaDataInfo struct {
 	ID          int        `gorm:"column:id;primaryKey;not null;autoIncrement;comment:自增ID"`
@@ -25,6 +24,17 @@ type MetaDataInfo struct {
 	CompressUid int64      `gorm:"column:compress_uid;comment:压缩文件ID"`
 	CreatedAt   *time.Time `gorm:"column:created_at;not null;comment:创建时间"`
 	UpdatedAt   *time.Time `gorm:"column:updated_at;not null;comment:更新时间"`
+}
+type DataInfo struct {
+	UID       int64      `json:"uid,string"`
+	Name      string     `json:"name"`
+	CreatedAt *time.Time `json:"created-at"`
+	UpdatedAt *time.Time `json:"updated-at"`
+}
+
+type VideoInfo struct {
+	UID  int64  `json:"uid,string" gorm:"column:uid"`
+	Name string `json:"name" gorm:"column:name"`
 }
 
 // GenUpload 上传链接请求体

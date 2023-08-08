@@ -25,7 +25,6 @@ func init() {
 
 func preProcessPartMerge(i interface{}) bool {
 	lgDB := new(plugins.LangGoDB).Use("default").NewDB()
-
 	taskID := i.(int64)
 	taskInfo, err := repo.NewTaskRepo().GetByID(lgDB, taskID)
 	if err != nil {
@@ -77,10 +76,10 @@ func handlePartMerge(i interface{}) error {
 	if err != nil {
 		return errors.New("当前上传链接无效，uid不存在")
 	}
-
 	fileName := path.Join(utils.LocalStore, fmt.Sprintf("%d", msg.StorageUid), metaData.StorageName)
 	out, err := os.Create(fileName)
 	if err != nil {
+		panic(err)
 		return errors.New("本地创建文件失败")
 	}
 
@@ -139,7 +138,7 @@ func handlePartMerge(i interface{}) error {
 		return errors.New("上传到minio失败")
 	}
 
-	// 更新元数据
+	// 更新元数据，应该加入md5
 	now := time.Now()
 	if err := repo.NewMetaDataInfoRepo().Updates(lgDB, metaData.UID, map[string]interface{}{
 		"multi_part":   false,

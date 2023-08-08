@@ -174,7 +174,7 @@ func initMySqlGorm(dbConfig *plugins.Database, conf *config.Configuration) {
 		sqlDB.SetMaxIdleConns(dbConfig.MaxIdleConns)
 		sqlDB.SetMaxOpenConns(dbConfig.MaxOpenConns)
 		// 执行数据库脚本建表
-		//initMySqlTables(db)
+		initMySqlTables(db)
 		lgDB[dbConfig.DBName].DB = db
 	}
 }

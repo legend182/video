@@ -24,10 +24,11 @@ func NewRouter(
 	corsM := middleware.NewCors()
 	traceL := middleware.NewTrace(lgLogger)
 	requestL := middleware.NewRequestLog(lgLogger)
-	panicRecover := middleware.NewPanicRecover(lgLogger)
+	//panicRecover := middleware.NewPanicRecover(lgLogger)
 
 	// 跨域 trace-id 日志
-	router.Use(corsM.Handler(), traceL.Handler(), requestL.Handler(), panicRecover.Handler())
+	//router.Use(corsM.Handler(), traceL.Handler(), requestL.Handler(), panicRecover.Handler())
+	router.Use(corsM.Handler(), traceL.Handler(), requestL.Handler())
 
 	// 静态资源
 	router.StaticFile("/assets", "../../static/image/back.png")
@@ -63,13 +64,20 @@ func setApiGroupRoutes(
 		group.GET("/proxy", v0.IsOnCurrentServerHandler)
 
 		// upload
-		group.PUT("/upload", v0.UploadSingleHandler)
-		group.PUT("/upload/multi", v0.UploadMultiPartHandler)
-		group.PUT("/upload/merge", v0.UploadMergeHandler)
+		group.PUT("/supload", v0.UploadSingleHandler1)
+		group.PUT("/mupload1", v0.UploadHandler1)
+		group.PUT("/mupload2", v0.UploadHandler2)
+		group.PUT("/mupload3", v0.UploadHandler3)
+		//group.PUT("/upload", v0.UploadSingleHandler)
+		//group.PUT("/upload/multi", v0.UploadMultiPartHandler)
+		//group.PUT("/upload/merge", v0.UploadMergeHandler)
 
 		//download
-		group.GET("/download", v0.DownloadHandler)
-
+		group.GET("/download", v0.DownloadHandler1)
+		//获取文件列表
+		group.GET("/fileList", v0.GetFileList)
+		// 视频播放
+		group.GET("/videos", v0.Videos)
 	}
 	return group
 }

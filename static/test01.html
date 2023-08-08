@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>File List</title>
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+        th, td {
+            border: 1px solid black;
+            padding: 8px;
+            text-align: left;
+        }
+        .pagination {
+            margin-top: 20px;
+        }
+        .pagination button {
+            margin-right: 5px;
+        }
+    </style>
+</head>
+<body>
+<h1>File List</h1>
+<table>
+    <thead>
+    <tr>
+        <th>UID</th>
+        <th>Name</th>
+        <th>Created At</th>
+        <th>Updated At</th>
+        <th>Actions</th>
+    </tr>
+    </thead>
+    <tbody id="fileListBody">
+    </tbody>
+</table>
+
+<div class="pagination">
+    <button id="prevButton" disabled>Previous</button>
+    <button id="nextButton">Next</button>
+</div>
+
+<script>
+    let currentPage = 1;
+    const pageSize = 3;
+    const prevButton = document.getElementById('prevButton');
+    const nextButton = document.getElementById('nextButton');
+
+    function fetchFileList(page) {
+        fetch(`http://127.0.0.1:8888/api/storage/v0/fileList?page=${page}&pageSize=${pageSize}`, {
+            method: 'GET'
+        })
+            .then(response => response.json())
+            .then(data => {
+                const fileListBody = document.getElementById('fileListBody');
+                fileListBody.innerHTML = '';
+
+                data.data.forEach(file => {
+                    const row = document.createElement('tr');
+                    const uidCell = document.createElement('td');
+                    uidCell.textContent = file.uid;
+                    row.appendChild(uidCell);
+                    const nameCell = document.createElement('td');
+                    nameCell.textContent = file.name;
+                    row.appendChild(nameCell);
+                    const createdAtCell = document.createElement('td');
+                    createdAtCell.textContent = file['created-at'];
+                    row.appendChild(createdAtCell);
+                    const updatedAtCell = document.createElement('td');
+                    updatedAtCell.textContent = file['updated-at'];
+                    row.appendChild(updatedAtCell);
+
+                    // 添加下载按钮
+                    const downloadButton = document.createElement('button');
+                    downloadButton.textContent = 'Download';
+                    downloadButton.addEventListener('click', () => {
+                        const downloadUrl = `http://127.0.0.1:8888/api/storage/v0/download?online=0&uid=${file.uid}&name=${file.name}`;
+                        // 执行下载操作，例如使用 window.location.href = downloadUrl;
+                        window.location.href = downloadUrl
+                        console.log('Download URL:', downloadUrl);
+                    });
+                    const actionsCell = document.createElement('td');
+                    actionsCell.appendChild(downloadButton);
+                    row.appendChild(actionsCell);
+
+                    // 添加预览按钮
+                    const previewButton = document.createElement('button');
+                    previewButton.textContent = 'Preview';
+                    previewButton.addEventListener('click', () => {
+                        const previewUrl = `http://127.0.0.1:8888/api/storage/v0/download?online=1&uid=${file.uid}&name=${file.name}`;
+                        // 执行预览操作，例如使用
+                        window.open(previewUrl);
+                        console.log('Preview URL:', previewUrl);
+                    });
+                    actionsCell.appendChild(previewButton);
+
+                    fileListBody.appendChild(row);
+                });
+
+                // 更新按钮状态
+                prevButton.disabled = currentPage === 1;
+                nextButton.disabled = data.length < pageSize;
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+    }
+
+    prevButton.addEventListener('click', () => {
+        currentPage--;
+        fetchFileList(currentPage);
+    });
+
+    nextButton.addEventListener('click', () => {
+        currentPage++;
+        fetchFileList(currentPage);
+    });
+
+    // 初始加载第一页数据
+    fetchFileList(currentPage);
+</script>
+</body>
+</html>
