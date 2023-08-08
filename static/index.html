@@ -93,7 +93,10 @@
     <button id="prevButton" disabled>Previous</button>
     <button id="nextButton">Next</button>
 </div>
-
+<!--  登录、注册-->
+<!-- index.html -->
+<button id="loginBtn">Login</button>
+<button id="registerBtn">Register</button>
 <script>
     let currentPage = 1;
     const pageSize = 3;
@@ -198,6 +201,12 @@
         formData.append('file', file);
         const xhr = new XMLHttpRequest();
         xhr.open('PUT', url, true);
+        x = localStorage.getItem('x-token')
+        if (x === null || x === undefined || x === '') {
+            alert("未登录")
+            return
+        }
+        xhr.setRequestHeader('x-token', x);
         xhr.onreadystatechange = function () {
             if (xhr.readyState === 4) {
                 if (xhr.status === 200) {
@@ -395,6 +404,40 @@
             loadNext();
         });
     }
+    // 登陆注册
+    // 处理登录按钮点击事件
+    document.getElementById('loginBtn').addEventListener('click', function() {
+        // 跳转到登录页面
+        window.location.href = 'login.html';
+    });
+    // 处理注册按钮点击事件
+    document.getElementById('registerBtn').addEventListener('click', function() {
+        // 跳转到注册页面
+        window.location.href = 'register.html';
+    });
+    // 将token加入
+    // 获取存储的 token
+    const token = localStorage.getItem('x-token');
+    // 发送带有 token 的请求
+    function sendRequestWithToken(url, method) {
+        const requestOptions = {
+            method: method,
+            headers: {
+                'x-token': `${token}`,
+            },
+        };
+
+        return fetch(url, requestOptions)
+            .then(response => response.json())
+            .catch(error => {
+                console.error('Request failed:', error);
+            });
+    }
+    // 示例：发送带有 token 的 GET 请求
+    // sendRequestWithToken('your_api_endpoint', 'GET')
+    //     .then(data => {
+    //         // 处理响应数据
+    //     });
 </script>
 </body>
 </html>

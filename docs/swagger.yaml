@@ -267,6 +267,32 @@ paths:
       summary: 初始化上传连接
       tags:
       - 链接
+  /api/storage/v0/login:
+    post:
+      consumes:
+      - multipart/form-data
+      description: 用户登录
+      parameters:
+      - description: 用户名
+        in: formData
+        name: username
+        required: true
+        type: string
+      - description: 密码
+        in: formData
+        name: password
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/web.Response'
+      summary: 用户登录
+      tags:
+      - 登录
   /api/storage/v0/mupload1:
     put:
       consumes:
@@ -396,6 +422,37 @@ paths:
       summary: 询问文件是否在当前服务
       tags:
       - proxy
+  /api/storage/v0/register:
+    post:
+      consumes:
+      - multipart/form-data
+      description: 注册用户
+      parameters:
+      - description: 昵称
+        in: formData
+        name: name
+        required: true
+        type: string
+      - description: 用户名
+        in: formData
+        name: username
+        required: true
+        type: string
+      - description: 密码
+        in: formData
+        name: password
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/web.Response'
+      summary: 注册用户
+      tags:
+      - 注册
   /api/storage/v0/resume:
     post:
       consumes:

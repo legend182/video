@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>视频播放器</title>
+</head>
+<body>
+<h1>视频播放器</h1>
+<div id="video-container">
+    <video id="video-player" width="320" height="240" controls autoplay></video>
+</div>
+<button onclick="previousVideo()">上一个视频</button>
+<button onclick="nextVideo()">下一个视频</button>
+
+<script>
+    // 存储视频列表的数组
+    var videos = [];
+
+    // 当前播放的视频索引
+    var currentIndex = -1;
+
+    // 获取视频的 UID 和名称
+    function fetchVideos() {
+        // 发送请求获取视频的 UID 和名称
+        fetch('http://127.0.0.1:8888/api/storage/v0/videos')
+            .then(response => response.json())
+            .then(data => {
+                // 存储视频列表
+                videos = data.data;
+
+                // 重新设置当前索引为第一个视频
+                currentIndex = 0;
+
+                // 播放第一个视频
+                playVideo();
+            })
+            .catch(error => {
+                console.error('获取视频列表失败:', error);
+            });
+    }
+
+    // 播放当前索引对应的视频
+    function playVideo() {
+        // 获取当前视频的 UID 和名称
+        var video = videos[currentIndex];
+
+        // 更新视频的 UID 和名称显示
+        document.getElementById('video-player').src = `http://127.0.0.1:8888/api/storage/v0/download?online=1&uid=${video.uid}&name=${video.name}`;
+    }
+
+    // 切换到上一个视频
+    function previousVideo() {
+        // 减少当前索引
+        currentIndex--;
+
+        // 如果索引小于 0，重新获取视频列表
+        if (currentIndex < 0) {
+            fetchVideos();
+            return;
+        }
+
+        // 播放上一个视频
+        playVideo();
+    }
+
+    // 切换到下一个视频
+    function nextVideo() {
+        // 增加当前索引
+        currentIndex++;
+
+        // 如果索引超过视频列表长度，重新获取视频列表
+        if (currentIndex >= videos.length) {
+            fetchVideos();
+            return;
+        }
+
+        // 播放下一个视频
+        playVideo();
+    }
+
+    // 页面加载完成后，获取视频列表
+    window.onload = function() {
+        fetchVideos();
+    };
+</script>
+</body>
+</html>

@@ -46,6 +46,7 @@ func NewRouter(
 func setApiGroupRoutes(
 	router *gin.Engine,
 ) *gin.RouterGroup {
+	jwt := middleware.NewJWT()
 	group := router.Group("/api/storage/v0")
 	{
 		//health
@@ -63,21 +64,34 @@ func setApiGroupRoutes(
 		// proxy
 		group.GET("/proxy", v0.IsOnCurrentServerHandler)
 
-		// upload
-		group.PUT("/supload", v0.UploadSingleHandler1)
-		group.PUT("/mupload1", v0.UploadHandler1)
-		group.PUT("/mupload2", v0.UploadHandler2)
-		group.PUT("/mupload3", v0.UploadHandler3)
-		//group.PUT("/upload", v0.UploadSingleHandler)
-		//group.PUT("/upload/multi", v0.UploadMultiPartHandler)
-		//group.PUT("/upload/merge", v0.UploadMergeHandler)
-
 		//download
 		group.GET("/download", v0.DownloadHandler1)
 		//获取文件列表
 		group.GET("/fileList", v0.GetFileList)
 		// 视频播放
 		group.GET("/videos", v0.Videos)
+		// 注册
+		group.POST("register", v0.SignUp)
+		//登录
+		group.POST("/login", v0.LoginHandler)
+
+		//upload
+		group.Use(jwt.JWTAuth())
+		{
+			group.PUT("/supload", v0.UploadSingleHandler1)
+			group.PUT("/mupload1", v0.UploadHandler1)
+			group.PUT("/mupload2", v0.UploadHandler2)
+			group.PUT("/mupload3", v0.UploadHandler3)
+		}
+		//group.Use(jwt.JWTAuth()).PUT("/supload", v0.UploadSingleHandler1)
+		//group.Use(jwt.JWTAuth()).PUT("/mupload1", v0.UploadHandler1)
+		//group.Use(jwt.JWTAuth()).PUT("/mupload2", v0.UploadHandler2)
+		//group.Use(jwt.JWTAuth()).PUT("/mupload3", v0.UploadHandler3)
+		//
+		//group.PUT("/upload", v0.UploadSingleHandler)
+		//group.PUT("/upload/multi", v0.UploadMultiPartHandler)
+		//group.PUT("/upload/merge", v0.UploadMergeHandler)
+
 	}
 	return group
 }

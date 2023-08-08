@@ -38,6 +38,15 @@ func Success(c *gin.Context, data interface{}) {
 	})
 }
 
+// SuccessLogin Success 登录成功
+func SuccessLogin(c *gin.Context, data interface{}) {
+	c.JSON(http.StatusOK, Response{
+		0,
+		"ok",
+		data,
+	})
+}
+
 // ParamsError 参数错误
 func ParamsError(c *gin.Context, msg string) {
 	c.JSON(http.StatusUnprocessableEntity, Response{

@@ -231,6 +231,8 @@ func initMySqlTables(db *gorm.DB) {
 		models.MultiPartInfo{},
 		models.TaskInfo{},
 		models.TaskLog{},
+		models.User{},
+		models.UserFile{},
 	)
 	if err != nil {
 		bootstrap.NewLogger().Logger.Error("migrate table failed", zap.Any("err", err))

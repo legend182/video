@@ -736,6 +736,21 @@ func UploadSingleHandler1(c *gin.Context) {
 			lgLogger.WithContext(c).Warn("上传数据，写入redis失败")
 		}
 		lgRedis.SetNX(context.Background(), fmt.Sprintf("%s-meta", uidStr), b, 5*60*time.Second)
+		value, exists := c.Get("userId")
+		if !exists {
+			lgLogger.WithContext(c).Error("用户查找失败")
+			web.InternalError(c, "用户查找失败,重新登录")
+			return
+		}
+		i := value.(int64)
+		err = repo.NewUFRepo().Create(lgdb, models.UserFile{
+			UserId: i,
+			FileId: uid,
+		})
+		if err != nil {
+			panic(err)
+			web.InternalError(c, "上传失败")
+		}
 		web.Success(c, "")
 		return
 	}
@@ -944,6 +959,20 @@ func UploadHandler2(c *gin.Context) {
 	}
 	if len(partInfo) != 0 {
 		_, _ = createLock.Release()
+		value, exists := c.Get("userId")
+		if !exists {
+			lgLogger.WithContext(c).Error("用户查找失败")
+			web.InternalError(c, "用户查找失败,重新登录")
+		}
+		i := value.(int64)
+		err = repo.NewUFRepo().Create(lgDB, models.UserFile{
+			UserId: i,
+			FileId: uid,
+		})
+		if err != nil {
+			panic(err)
+			web.InternalError(c, "上传失败")
+		}
 		web.Success(c, "")
 		return
 	}
@@ -1064,6 +1093,20 @@ func UploadHandler2(c *gin.Context) {
 		return
 	}
 	_, _ = createLock.Release()
+	value, exists := c.Get("userId")
+	if !exists {
+		lgLogger.WithContext(c).Error("用户查找失败")
+		web.InternalError(c, "用户查找失败,重新登录")
+	}
+	i := value.(int64)
+	err = repo.NewUFRepo().Create(lgDB, models.UserFile{
+		UserId: i,
+		FileId: uid,
+	})
+	if err != nil {
+		panic(err)
+		web.InternalError(c, "上传失败")
+	}
 	web.Success(c, "")
 	return
 }
