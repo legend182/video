@@ -4666,3 +4666,32 @@
 {"level":"prod.info","ts":"[2023-08-09 18:08:24.473]","caller":"plugins/plugins.go:49","msg":"DB Success Close ... "}
 {"level":"prod.info","ts":"[2023-08-09 18:08:24.474]","caller":"plugins/plugins.go:49","msg":"Minio Success Close ... "}
 {"level":"prod.info","ts":"[2023-08-09 18:08:24.474]","caller":"plugins/plugins.go:49","msg":"Redis Success Close ... "}
+{"level":"prod.info","ts":"[2023-08-09 18:08:31.560]","caller":"plugins/plugins.go:35","msg":"Redis Init ... "}
+{"level":"prod.info","ts":"[2023-08-09 18:08:31.573]","caller":"plugins/plugins.go:37","msg":"Redis HealthCheck ... "}
+{"level":"prod.info","ts":"[2023-08-09 18:08:31.793]","caller":"plugins/plugins.go:39","msg":"Redis Success Init. "}
+{"level":"prod.info","ts":"[2023-08-09 18:08:31.794]","caller":"plugins/plugins.go:35","msg":"DB Init ... "}
+{"level":"prod.info","ts":"[2023-08-09 18:08:38.565]","caller":"plugins/plugins.go:37","msg":"DB HealthCheck ... "}
+{"level":"prod.info","ts":"[2023-08-09 18:08:38.643]","caller":"plugins/plugins.go:39","msg":"DB Success Init. "}
+{"level":"prod.info","ts":"[2023-08-09 18:08:38.643]","caller":"plugins/plugins.go:35","msg":"Minio Init ... "}
+{"level":"prod.info","ts":"[2023-08-09 18:08:38.643]","caller":"plugins/plugins.go:37","msg":"Minio HealthCheck ... "}
+{"level":"prod.info","ts":"[2023-08-09 18:08:38.791]","caller":"plugins/plugins.go:39","msg":"Minio Success Init. "}
+{"level":"prod.info","ts":"[2023-08-09 18:08:39.289]","caller":"storage/customstorage.go:40","msg":"当前使用的对象存储：Minio"}
+{"level":"prod.info","ts":"[2023-08-09 18:08:40.771]","caller":"app/app.go:49","msg":"start app ..."}
+{"level":"prod.info","ts":"[2023-08-09 18:08:40.771]","caller":"app/app.go:58","msg":"start task ..."}
+{"level":"prod.info","ts":"[2023-08-09 18:08:41.000]","caller":"base/registanddiscover.go:59","msg":"当前上报ip:14.150.189.151"}
+{"level":"prod.info","ts":"[2023-08-09 18:08:41.002]","caller":"middleware/requestlogger.go:55","msg":"RequestInfo","traceId":"0037dbe4-11de-44a3-9d94-d64bc5dcef4c","content-type":"","Ip":"127.0.0.1","Method":"GET","URL":"/api/storage/v0/health","Query":"","Header":"user-id: , organization-id: , request-id: , write: "}
+{"level":"prod.info","ts":"[2023-08-09 18:08:41.003]","caller":"middleware/requestlogger.go:74","msg":"ResponseInfo","traceId":"0037dbe4-11de-44a3-9d94-d64bc5dcef4c","Path":"/api/storage/v0/health","Status":200,"Cost":0.0005589}
+{"level":"prod.info","ts":"[2023-08-09 18:08:51.316]","caller":"middleware/requestlogger.go:55","msg":"RequestInfo","traceId":"a0686aef-b5f1-4c29-9c07-0be8ba02a57d","content-type":"","Ip":"127.0.0.1","Method":"GET","URL":"/api/storage/v0/fileList","Query":"page=1&pageSize=3","Header":"user-id: , organization-id: , request-id: , write: "}
+{"level":"prod.info","ts":"[2023-08-09 18:08:51.499]","caller":"middleware/requestlogger.go:74","msg":"ResponseInfo","traceId":"a0686aef-b5f1-4c29-9c07-0be8ba02a57d","Path":"/api/storage/v0/fileList","Status":200,"Cost":0.1829322}
+{"level":"prod.info","ts":"[2023-08-09 18:08:57.150]","caller":"middleware/requestlogger.go:55","msg":"RequestInfo","traceId":"32baa10b-ce7e-4b91-9803-eb59fa563b7a","content-type":"application/json","Ip":"127.0.0.1","Method":"POST","URL":"/api/storage/v0/login","Query":"","Header":"user-id: , organization-id: , request-id: , write: "}
+{"level":"prod.info","ts":"[2023-08-09 18:08:57.305]","caller":"middleware/requestlogger.go:74","msg":"ResponseInfo","traceId":"32baa10b-ce7e-4b91-9803-eb59fa563b7a","Path":"/api/storage/v0/login","Status":200,"Cost":0.1555833}
+{"level":"prod.info","ts":"[2023-08-09 18:09:00.199]","caller":"middleware/requestlogger.go:55","msg":"RequestInfo","traceId":"8e96e568-49b6-4553-b883-88c6b73deddf","content-type":"","Ip":"127.0.0.1","Method":"GET","URL":"/api/storage/v0/fileList","Query":"page=1&pageSize=3","Header":"user-id: , organization-id: , request-id: , write: "}
+{"level":"prod.info","ts":"[2023-08-09 18:09:00.341]","caller":"middleware/requestlogger.go:74","msg":"ResponseInfo","traceId":"8e96e568-49b6-4553-b883-88c6b73deddf","Path":"/api/storage/v0/fileList","Status":200,"Cost":0.1420261}
+{"level":"prod.info","ts":"[2023-08-09 18:09:33.592]","caller":"middleware/requestlogger.go:55","msg":"RequestInfo","traceId":"428735ef-79ae-40b6-b60d-2b24c34e0cd6","content-type":"multipart/form-data","Ip":"127.0.0.1","Method":"PUT","URL":"/api/storage/v0/supload","Query":"","Header":"user-id: , organization-id: , request-id: , write: "}
+{"level":"prod.info","ts":"[2023-08-09 18:09:35.068]","caller":"middleware/requestlogger.go:74","msg":"ResponseInfo","traceId":"428735ef-79ae-40b6-b60d-2b24c34e0cd6","Path":"/api/storage/v0/supload","Status":200,"Cost":1.4758544}
+{"level":"prod.info","ts":"[2023-08-09 18:09:38.455]","caller":"middleware/requestlogger.go:55","msg":"RequestInfo","traceId":"c80bd54c-4153-4373-a2d7-a7cfbd09d746","content-type":"multipart/form-data","Ip":"127.0.0.1","Method":"PUT","URL":"/api/storage/v0/supload","Query":"","Header":"user-id: , organization-id: , request-id: , write: "}
+{"level":"prod.info","ts":"[2023-08-09 18:09:39.478]","caller":"middleware/requestlogger.go:74","msg":"ResponseInfo","traceId":"c80bd54c-4153-4373-a2d7-a7cfbd09d746","Path":"/api/storage/v0/supload","Status":200,"Cost":1.0227576}
+{"level":"prod.info","ts":"[2023-08-09 18:11:41.092]","caller":"middleware/requestlogger.go:55","msg":"RequestInfo","traceId":"8836ae07-323d-48f0-a29d-6f1ddbd56d36","content-type":"","Ip":"127.0.0.1","Method":"GET","URL":"/api/storage/v0/health","Query":"","Header":"user-id: , organization-id: , request-id: , write: "}
+{"level":"prod.info","ts":"[2023-08-09 18:11:41.093]","caller":"middleware/requestlogger.go:74","msg":"ResponseInfo","traceId":"8836ae07-323d-48f0-a29d-6f1ddbd56d36","Path":"/api/storage/v0/health","Status":200,"Cost":0.0006054}
+{"level":"prod.info","ts":"[2023-08-09 18:14:41.205]","caller":"middleware/requestlogger.go:55","msg":"RequestInfo","traceId":"f14b107f-1d51-4182-bb65-05fe17467a2f","content-type":"","Ip":"127.0.0.1","Method":"GET","URL":"/api/storage/v0/health","Query":"","Header":"user-id: , organization-id: , request-id: , write: "}
+{"level":"prod.info","ts":"[2023-08-09 18:14:41.206]","caller":"middleware/requestlogger.go:74","msg":"ResponseInfo","traceId":"f14b107f-1d51-4182-bb65-05fe17467a2f","Path":"/api/storage/v0/health","Status":200,"Cost":0.000647}
