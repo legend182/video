@@ -592,6 +592,72 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/storage/v0/sendComment": {
+            "post": {
+                "description": "发送评论",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "发送评论"
+                ],
+                "summary": "发送评论",
+                "parameters": [
+                    {
+                        "description": "发送评论请求体",
+                        "name": "RequestBody",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.SendReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/web.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/storage/v0/showComment": {
+            "get": {
+                "description": "显示评论",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "显示评论"
+                ],
+                "summary": "显示评论",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "视频uid",
+                        "name": "uid",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/web.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/api/storage/v0/supload": {
             "put": {
                 "description": "单文件上传",
@@ -995,6 +1061,27 @@ const docTemplate = `{
                 },
                 "uid": {
                     "type": "string"
+                }
+            }
+        },
+        "models.SendReq": {
+            "type": "object",
+            "properties": {
+                "content": {
+                    "type": "string"
+                },
+                "rootCommentId": {
+                    "description": "UserId        int64  ` + "`" + `json:\"userId,string\"` + "`" + `",
+                    "type": "string",
+                    "example": "0"
+                },
+                "toUserId": {
+                    "type": "string",
+                    "example": "0"
+                },
+                "videoId": {
+                    "type": "string",
+                    "example": "0"
                 }
             }
         },

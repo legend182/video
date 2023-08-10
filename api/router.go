@@ -74,14 +74,18 @@ func setApiGroupRoutes(
 		group.POST("register", v0.SignUp)
 		//登录
 		group.POST("/login", v0.LoginHandler)
-
+		//
+		group.GET("/showComment", v0.ShowCommentHandler)
 		//upload
 		group.Use(jwt.JWTAuth())
 		{
+			// 文件上传
 			group.PUT("/supload", v0.UploadSingleHandler1)
 			group.PUT("/mupload1", v0.UploadHandler1)
 			group.PUT("/mupload2", v0.UploadHandler2)
 			group.PUT("/mupload3", v0.UploadHandler3)
+			//用户评论
+			group.POST("/sendComment", v0.SendCommentHandler)
 		}
 		//group.Use(jwt.JWTAuth()).PUT("/supload", v0.UploadSingleHandler1)
 		//group.Use(jwt.JWTAuth()).PUT("/mupload1", v0.UploadHandler1)

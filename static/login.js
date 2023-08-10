@@ -18,7 +18,7 @@ document.getElementById('loginForm').addEventListener('submit', function(event) 
         .then(response => response.json())
         .then(data => {
             // 登录成功，保存 token 到 Web Storage
-            alert(data.data)
+            console.log(data.data)
             localStorage.setItem('x-token', data.data);
             alert("登陆成功")
             // 重定向到 index.html

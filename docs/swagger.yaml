@@ -88,6 +88,21 @@ definitions:
       uid:
         type: string
     type: object
+  models.SendReq:
+    properties:
+      content:
+        type: string
+      rootCommentId:
+        description: UserId        int64  `json:"userId,string"`
+        example: "0"
+        type: string
+      toUserId:
+        example: "0"
+        type: string
+      videoId:
+        example: "0"
+        type: string
+    type: object
   models.UrlResult:
     properties:
       multi:
@@ -482,6 +497,49 @@ paths:
       summary: 秒传&断点续传
       tags:
       - 秒传
+  /api/storage/v0/sendComment:
+    post:
+      consumes:
+      - application/json
+      description: 发送评论
+      parameters:
+      - description: 发送评论请求体
+        in: body
+        name: RequestBody
+        required: true
+        schema:
+          $ref: '#/definitions/models.SendReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/web.Response'
+      summary: 发送评论
+      tags:
+      - 发送评论
+  /api/storage/v0/showComment:
+    get:
+      consumes:
+      - application/json
+      description: 显示评论
+      parameters:
+      - description: 视频uid
+        in: query
+        name: uid
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/web.Response'
+      summary: 显示评论
+      tags:
+      - 显示评论
   /api/storage/v0/supload:
     put:
       consumes:

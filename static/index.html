@@ -97,6 +97,24 @@
 <!-- index.html -->
 <button id="loginBtn">Login</button>
 <button id="registerBtn">Register</button>
+<h1>视频播放器</h1>
+<!--播放视频-->
+<div id="video-container">
+    <video id="video-player" width="320" height="240" controls autoplay></video>
+</div>
+<button onclick="previousVideo()">上一个视频</button>
+<button onclick="nextVideo()">下一个视频</button>
+<!--提交评论-->
+<div id="comment-form">
+    <label for="comment-input">评论内容:</label>
+    <input type="text" id="comment-input" placeholder="输入评论">
+    <button onclick="submitComment()">提交评论</button>
+</div>
+<!--评论列表-->
+<div id="comments-container">
+    <h2>评论:</h2>
+    <ul id="comments-list"></ul>
+</div>
 <script>
     let currentPage = 1;
     const pageSize = 3;
@@ -438,6 +456,149 @@
     //     .then(data => {
     //         // 处理响应数据
     //     });
+//   视频 评论
+    // 存储视频列表的数组
+    var videos = [];
+
+    // 当前播放的视频索引
+    var currentIndex = -1;
+
+    // 获取视频的 UID 和名称
+    function fetchVideos() {
+        // 发送请求获取视频的 UID 和名称
+        fetch('http://127.0.0.1:8888/api/storage/v0/videos')
+            .then(response => response.json())
+            .then(data => {
+                // 存储视频列表
+                videos = data.data;
+
+                // 重新设置当前索引为第一个视频
+                currentIndex = 0;
+
+                // 播放第一个视频
+                playVideo();
+            })
+            .catch(error => {
+                console.error('获取视频列表失败:', error);
+            });
+    }
+
+    // 播放当前索引对应的视频
+    function playVideo() {
+        // 获取当前视频的 UID 和名称
+        var video = videos[currentIndex];
+
+        // 更新视频的 UID 和名称显示
+        document.getElementById('video-player').src = `http://127.0.0.1:8888/api/storage/v0/download?online=1&uid=${video.uid}&name=${video.name}`;
+    }
+
+    // 切换到上一个视频
+    function previousVideo() {
+        // 减少当前索引
+        currentIndex--;
+
+        // 如果索引小于 0，重新获取视频列表
+        if (currentIndex < 0) {
+            fetchVideos();
+            return;
+        }
+
+        // 播放上一个视频
+        playVideo();
+    }
+
+    // 切换到下一个视频
+    function nextVideo() {
+        // 增加当前索引
+        currentIndex++;
+
+        // 如果索引超过视频列表长度，重新获取视频列表
+        if (currentIndex >= videos.length) {
+            fetchVideos();
+            return;
+        }
+
+        // 播放下一个视频
+        playVideo();
+    }
+
+    // 页面加载完成后，获取视频列表
+    window.onload = function() {
+        fetchVideos();
+    };
+    function displayComments(comments) {
+        var commentsList = document.getElementById("comments-list");
+        commentsList.innerHTML = ""; // 清空之前的评论列表
+
+        comments.forEach(function(comment) {
+            var commentItem = document.createElement("li");
+            commentItem.style.fontSize="20px"
+            commentItem.textContent = comment.content; // 假设评论文本存储在"text"字段中
+            commentsList.appendChild(commentItem);
+            // 检查是否有子评论
+            if (comment.showComment !== null) {
+                comment.showComment.forEach(function(showComment) {
+                    var commentItem = document.createElement("li");
+                    commentItem.style.fontSize="10px"
+                    commentItem.textContent = showComment.content; // 假设评论文本存储在"text"字段中
+                    commentsList.appendChild(commentItem);
+                    console.log(showComment.content);
+                });
+            }
+        });
+    }
+
+    function getComments() {
+        var vid = videos[currentIndex].uid;
+        fetch(`http://127.0.0.1:8888/api/storage/v0/showComment?uid=${vid}`, {
+            method: 'GET'
+        })
+            .then(response => response.json())
+            .then(data => {
+                // 处理返回的评论数据
+                displayComments(data.data);
+            })
+            .catch(error => {
+                // 处理请求错误
+                console.error(error);
+            });
+    }
+
+    function submitComment() {
+        var commentInput = document.getElementById("comment-input");
+        var comment = commentInput.value;
+        alert(comment)
+        var vid = videos[currentIndex].uid;
+        x = localStorage.getItem('x-token')
+        if (x === null || x === undefined || x === '') {
+            alert("未登录")
+            return
+        }
+        console.log(x)
+        fetch('http://127.0.0.1:8888/api/storage/v0/sendComment', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'x-token':x
+            },
+            body: JSON.stringify({ content:comment, videoId:vid,rootCommentId:"0",toUserId:"0"})
+        })
+            .then(response => response.json())
+            .then(data => {
+                // 处理发送评论的响应
+                console.log(data);
+                // 刷新评论列表
+                getComments();
+            })
+            .catch(error => {
+                // 处理请求错误
+                console.error(error);
+            });
+    }
+    // 页面加载完成后获取评论
+    document.addEventListener("DOMContentLoaded", function() {
+        getComments();
+    });
 </script>
 </body>
 </html>

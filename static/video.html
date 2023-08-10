@@ -6,12 +6,23 @@
 </head>
 <body>
 <h1>视频播放器</h1>
+<!--播放视频-->
 <div id="video-container">
     <video id="video-player" width="320" height="240" controls autoplay></video>
 </div>
 <button onclick="previousVideo()">上一个视频</button>
 <button onclick="nextVideo()">下一个视频</button>
-
+<!--提交评论-->
+<div id="comment-form">
+    <label for="comment-input">评论内容:</label>
+    <input type="text" id="comment-input" placeholder="输入评论">
+    <button onclick="submitComment()">提交评论</button>
+</div>
+<!--评论列表-->
+<div id="comments-container">
+    <h2>评论:</h2>
+    <ul id="comments-list"></ul>
+</div>
 <script>
     // 存储视频列表的数组
     var videos = [];
@@ -82,6 +93,70 @@
     window.onload = function() {
         fetchVideos();
     };
+    function displayComments(comments) {
+        var commentsList = document.getElementById("comments-list");
+        commentsList.innerHTML = ""; // 清空之前的评论列表
+
+        comments.forEach(function(comment) {
+            var commentItem = document.createElement("li");
+            commentItem.style.fontSize="20px"
+            commentItem.textContent = comment.content; // 假设评论文本存储在"text"字段中
+            commentsList.appendChild(commentItem);
+            // 检查是否有子评论
+            if (comment.showComment !== null) {
+                comment.showComment.forEach(function(showComment) {
+                    var commentItem = document.createElement("li");
+                    commentItem.style.fontSize="10px"
+                    commentItem.textContent = showComment.content; // 假设评论文本存储在"text"字段中
+                    commentsList.appendChild(commentItem);
+                    console.log(showComment.content);
+                });
+            }
+        });
+    }
+
+    function getComments() {
+        fetch('http://127.0.0.1:8888/api/storage/v0/showComment?uid=1147237938048815104', {
+            method: 'GET'
+        })
+            .then(response => response.json())
+            .then(data => {
+                // 处理返回的评论数据
+                displayComments(data.data);
+            })
+            .catch(error => {
+                // 处理请求错误
+                console.error(error);
+            });
+    }
+
+    function submitComment() {
+        var commentInput = document.getElementById("comment-input");
+        var comment = commentInput.value;
+        var vid = videos[currentIndex].uid;
+        fetch('http://127.0.0.1:8888/api/storage/v0/sendComment', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ comment: comment, videoId:vid,rootCommentId:"0",toUserId:"0"})
+        })
+            .then(response => response.json())
+            .then(data => {
+                // 处理发送评论的响应
+                console.log(data);
+                // 刷新评论列表
+                getComments();
+            })
+            .catch(error => {
+                // 处理请求错误
+                console.error(error);
+            });
+    }
+    // 页面加载完成后获取评论
+    document.addEventListener("DOMContentLoaded", function() {
+        getComments();
+    });
 </script>
 </body>
 </html>
