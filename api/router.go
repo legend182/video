@@ -24,11 +24,11 @@ func NewRouter(
 	corsM := middleware.NewCors()
 	traceL := middleware.NewTrace(lgLogger)
 	requestL := middleware.NewRequestLog(lgLogger)
-	//panicRecover := middleware.NewPanicRecover(lgLogger)
+	panicRecover := middleware.NewPanicRecover(lgLogger)
 
 	// 跨域 trace-id 日志
-	//router.Use(corsM.Handler(), traceL.Handler(), requestL.Handler(), panicRecover.Handler())
-	router.Use(corsM.Handler(), traceL.Handler(), requestL.Handler())
+	router.Use(corsM.Handler(), traceL.Handler(), requestL.Handler(), panicRecover.Handler())
+	//router.Use(corsM.Handler(), traceL.Handler(), requestL.Handler())
 
 	// 静态资源
 	router.StaticFile("/assets", "../../static/image/back.png")
