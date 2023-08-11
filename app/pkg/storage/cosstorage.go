@@ -113,3 +113,8 @@ func (s *CosStorage) DeleteObject(bucketName, objectName string) error {
 	_, err := client.Object.Delete(context.Background(), objectName, nil)
 	return err
 }
+
+// GetFileUrl 待重写
+func (s *CosStorage) GetFileUrl(bucketName, objectName string) (urlStr string, err error) {
+	return fmt.Sprintf("%s", "url"), err
+}

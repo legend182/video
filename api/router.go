@@ -68,7 +68,7 @@ func setApiGroupRoutes(
 		group.GET("/download", v0.DownloadHandler1)
 		//获取文件列表
 		group.GET("/fileList", v0.GetFileList)
-		// 视频播放
+		// 视频播放Uid
 		group.GET("/videos", v0.Videos)
 		// 注册
 		group.POST("register", v0.SignUp)
@@ -76,6 +76,8 @@ func setApiGroupRoutes(
 		group.POST("/login", v0.LoginHandler)
 		//
 		group.GET("/showComment", v0.ShowCommentHandler)
+		// 直接桶播放 获取minio视频流
+		group.GET("/minioStream", v0.GetMinioAdd)
 		//upload
 		group.Use(jwt.JWTAuth())
 		{

@@ -19,6 +19,8 @@ type CustomStorage interface {
 
 	// DeleteObject 删除存储对象
 	DeleteObject(string, string) error
+	// GetFileUrl 获取桶url
+	GetFileUrl(string, string) (string, error)
 }
 
 type LangGoStorage struct {

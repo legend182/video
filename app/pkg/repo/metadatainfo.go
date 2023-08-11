@@ -21,7 +21,7 @@ func (r *metaDataInfoRepo) GetByUid(db *gorm.DB, uid int64) (*models.MetaDataInf
 // GetAllVideo .
 func (r *metaDataInfoRepo) GetAllVideo(db *gorm.DB) ([]models.VideoInfo, error) {
 	var ret []models.VideoInfo
-	if err := db.Model(&models.MetaDataInfo{}).Select("uid", "name").Where("status = ? AND bucket=? ", 1, "video").Find(&ret).Error; err != nil {
+	if err := db.Model(&models.MetaDataInfo{}).Select("uid", "name").Where("status = ? AND bucket=?", 1, "video").Find(&ret).Error; err != nil {
 		return ret, err
 	}
 	return ret, nil

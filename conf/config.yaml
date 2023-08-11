@@ -19,7 +19,7 @@ log:
 database:
   - db_name: default
     driver: mysql                # 数据库驱动
-    host: 127.0.0.1             # 服务地址
+    host: 101.43.210.227           # 服务地址
     port: 3306                     # 端口号
     database: osproxy              # 数据库名称
     username: root             # 用户名
@@ -33,13 +33,13 @@ database:
     log_filename: sql.log           # 日志文件名称
 
 redis:
-  host: 127.0.0.1    # 服务地址
+  host: 101.43.210.227    # 服务地址
   port: 6379             # 服务端口
   db: 0                  # 库选择
   password: 123456       # 密码
 
 minio:
-  endpoint: 127.0.0.1:9000      # 服务地址
+  endpoint: 101.43.210.227:9000      # 服务地址
   access_key_id: minioadmin     # 用户名
   secret_access_key: minioadmin # 密码
   use_ssl: false                # 密码

@@ -2,10 +2,13 @@ package storage
 
 import (
 	"context"
+	"fmt"
 	"github.com/minio/minio-go/v7"
 	"github.com/qinguoyi/osproxy/app/pkg/utils"
 	"github.com/qinguoyi/osproxy/bootstrap/plugins"
 	"io"
+	"net/url"
+	"time"
 )
 
 // MinIOStorage minio存储
@@ -78,8 +81,16 @@ func (s *MinIOStorage) StatObject(bucketName, objectName string) (int64, error) 
 }
 
 func (s *MinIOStorage) DeleteObject(bucketName, objectName string) error {
-
 	ctx := context.Background()
 	err := s.client.RemoveObject(ctx, bucketName, objectName, minio.RemoveObjectOptions{})
 	return err
+}
+func (s *MinIOStorage) GetFileUrl(bucketName, objectName string) (urlStr string, err error) {
+	ctx := context.Background()
+	reqParams := make(url.Values)
+	url, err := s.client.PresignedGetObject(ctx, bucketName, objectName, 3*time.Minute, reqParams)
+	if err != nil {
+		panic(err)
+	}
+	return fmt.Sprintf("%s", url), err
 }

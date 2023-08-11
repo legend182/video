@@ -87,3 +87,8 @@ func (s *LocalStorage) DeleteObject(bucketName, objectName string) error {
 	err := os.RemoveAll(objectPath)
 	return err
 }
+
+// GetFileUrl 待重写
+func (s *LocalStorage) GetFileUrl(bucketName, objectName string) (urlStr string, err error) {
+	return fmt.Sprintf("%s", "hello"), err
+}

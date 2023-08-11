@@ -254,6 +254,11 @@
         })
         const totalChunks = Math.ceil(file.size / (1 * 1024 * 1024)); // 分片大小为1MB
         const xhr = new XMLHttpRequest();
+        x = localStorage.getItem('x-token')
+        if (x === null || x === undefined || x === '') {
+            alert("未登录")
+            return
+        }
         xhr.open('PUT', initiateUrl, true);
         xhr.onreadystatechange = function () {
             if (xhr.readyState === 4) {
@@ -279,53 +284,11 @@
         xhr.send(formData);
     }
 
-    //async function uploadChunks(uid, file, totalChunks) {
-    //     const uploadUrl = 'http://127.0.0.1:8888/api/storage/v0/mupload2'; // 替换为实际的分片上传接口
-    //     const chunkSize = 1 * 1024 * 1024; // 分片大小为1MB
-    //     let chunkIndex
-    //     for (chunkIndex = 0; chunkIndex < totalChunks; chunkIndex++) {
-    //         const startByte = chunkIndex * chunkSize;
-    //         const endByte = Math.min(startByte + chunkSize, file.size);
-    //         const chunk = file.slice(startByte, endByte);
-    //         let fileMD5
-    //         await calculateFileMD5(chunk).then(md5 => {
-    //             // 在 .then() 方法中将解析值分配给变量
-    //             fileMD5 = md5;
-    //             console.log(`数据块的 MD5 值：${md5}`);
-    //             //alert(md5)
-    //             // 进行其他操作，使用 md5Value 变量
-    //         }).catch(error => {
-    //             console.error('计算数据块的 MD5 值时发生错误:', error);
-    //         })
-    //         const chunkMD5 = fileMD5;
-    //         const formData = new FormData();
-    //         formData.append('uid', uid);
-    //         formData.append('chunkNum', chunkIndex);
-    //         formData.append('md5', chunkMD5);
-    //         formData.append('file', chunk);
-    //
-    //         const xhr = new XMLHttpRequest();
-    //         xhr.open('PUT', uploadUrl, true);
-    //         xhr.onreadystatechange = function () {
-    //             if (xhr.readyState === 4) {
-    //                 if (xhr.status === 200) {
-    //                     // 分片上传成功的处理逻辑
-    //                 } else {
-    //                     // 分片上传失败的处理逻辑
-    //                 }
-    //             }
-    //         };
-    //
-    //         xhr.send(formData);
-    //     }
-    //     // 分片传输完成后进行合并
-    //     mergeChunks(uid);
-    // }
+
     async function uploadChunks(uid, file, totalChunks) {
         const uploadUrl = 'http://127.0.0.1:8888/api/storage/v0/mupload2'; // 替换为实际的分片上传接口
         const chunkSize = 1 * 1024 * 1024; // 分片大小为1MB
         const promises = [];
-
         for (let chunkIndex = 0; chunkIndex < totalChunks; chunkIndex++) {
             const startByte = chunkIndex * chunkSize;
             const endByte = Math.min(startByte + chunkSize, file.size);
@@ -341,7 +304,11 @@
                         formData.append('chunkNum', chunkIndex);
                         formData.append('md5', chunkMD5);
                         formData.append('file', chunk);
-
+                        x = localStorage.getItem('x-token')
+                        if (x === null || x === undefined || x === '') {
+                            alert("未登录")
+                            return
+                        }
                         const xhr = new XMLHttpRequest();
                         xhr.open('PUT', uploadUrl, true);
                         xhr.onreadystatechange = function () {
@@ -372,6 +339,11 @@
         const mergeUrl = 'http://127.0.0.1:8888/api/storage/v0/mupload3'; // 替换为实际的分片合并接口
         const xhr = new XMLHttpRequest();
         xhr.open('PUT', mergeUrl, true);
+        x = localStorage.getItem('x-token')
+        if (x === null || x === undefined || x === '') {
+            alert("未登录")
+            return
+        }
         xhr.onreadystatechange = function () {
             if (xhr.readyState === 4) {
                 if (xhr.status === 200) {
@@ -486,10 +458,19 @@
     // 播放当前索引对应的视频
     function playVideo() {
         // 获取当前视频的 UID 和名称
-        var video = videos[currentIndex];
-
+        var video = videos[currentIndex].uid;
+        getComments();
         // 更新视频的 UID 和名称显示
-        document.getElementById('video-player').src = `http://127.0.0.1:8888/api/storage/v0/download?online=1&uid=${video.uid}&name=${video.name}`;
+        fetch(`http://127.0.0.1:8888/api/storage/v0/minioStream?uid=${video}`)
+            .then(response => response.json())
+            .then(data => {
+                // 获取视频
+                url = data.data;
+                document.getElementById('video-player').src = url;
+            })
+            .catch(error => {
+                console.error('获取视频列表失败:', error);
+            });
     }
 
     // 切换到上一个视频
@@ -595,10 +576,10 @@
                 console.error(error);
             });
     }
-    // 页面加载完成后获取评论
-    document.addEventListener("DOMContentLoaded", function() {
-        getComments();
-    });
+    // // 页面加载完成后获取评论
+    // document.addEventListener("DOMContentLoaded", function() {
+    //     getComments();
+    // });
 </script>
 </body>
 </html>

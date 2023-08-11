@@ -80,3 +80,6 @@ func (s *OssStorage) DeleteObject(bucketName, objectName string) error {
 	err = bucket.DeleteObject(objectName)
 	return err
 }
+func (s *OssStorage) GetFileUrl(bucketName, objectName string) (urlStr string, err error) {
+	return fmt.Sprintf("%s", "hello"), err
+}
